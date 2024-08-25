@@ -1,6 +1,6 @@
 var selectedRow = null;
 
-//swho alerts
+//show alerts
 function showAlert(message, className){
     const div = document.createElement("div");
     div.className=`alert alert-${className}`;
@@ -31,31 +31,54 @@ document.querySelector("#student-form").addEventListener("submit", (e)=>{
     //validate
 
     if(firstName == "" || lastName == "" || rollNo ==""){
-        showAlert("Please fill in all fields", "danger")
+        showAlert("Please fill in all fields", "danger");
     } else{
         if(selectedRow == null){
             const list = document.querySelector("#student-list");
-            const row = document.createComment("tr");
+            const row = document.createElement("tr");
 
-            row.innerHTML = '
+            row.innerHTML = `
              <td>${firstName}</td>
             <td>${lastName}</td>
             <td>${rollNo}</td>
             <td>
-             <a href="#" class="btn btn-warning btn-sm edit">Edit</a>
-             <a href="#" class="btn btn-danger btn-sm delete">Delete</a>
+            <a href="#" class="btn btn-warning btn-sm edit">Edit</a>
+            <a href="#" class="btn btn-danger btn-sm delete">Delete</a>
             
-            ';
+            `;
+            list.appendChild(row);
+            selectedRow = null;
+            showAlert("Student Added", "success");
         }
+        else{
+            selectedRow.children[0].textContent = firstName;
+            selectedRow.children[1].textContent = lastName;
+            selectedRow.children[2].textContent = rollNo;
+            selectedRow = null;
+            showAlert("Student Info Editor", "info");
+        }
+        clearFields();
+    }
 
 });
 
+//Edit Data
+document.querySelector("#student-list").addEventListener("click", (e) =>{
+    target = e.target;
+    if(target.classList.contains("edit")){
+        selectedRow = target.parentElement.parentElement;
+        document.querySelector("#firstName").value = selectedRow.children[0].textContent;
+        document.querySelector("#lastName").value = selectedRow.children[1].textContent;
+        document.querySelector("#rollNo").value = selectedRow.children[2].textContent;
+    }
+})
+
 //delete data
 
-document.querySelector("#student-list").addEventListener("click", (e)=>{
+document.querySelector("#student-list").addEventListener("click", (e) =>{
     target = e.target;
     if(target.classList.contains("delete")){
         target.parentElement.parentElement.remove();
         showAlert("student Data Deleted", "danger");
     }
-})
+});
